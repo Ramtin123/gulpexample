@@ -8,22 +8,24 @@ var paths={
 	rootVender:'root/vender'
 	
 };
-gulp.task('default',['scripts','serve','watch']);
+gulp.task('default',['watch']);
 
 gulp.task('scripts',function(){
 	var rootindex=gulp.src(paths.index).pipe(gulp.dest(paths.root));
 	var scripts=gulp.src('app/**/*.js').pipe(gulp.dest(paths.root));
 	var vendorscripts=gulp.src(mainbowerfiles()).pipe(gulp.dest(paths.rootVender));
-	rootindex.pipe(inject(vendorscripts,{relative:true,name:'vendorinject'})).pipe(inject(scripts,{relative:true})).pipe(gulp.dest(paths.root));
+	return rootindex.pipe(inject(vendorscripts,{relative:true,name:'vendorinject'})).pipe(inject(scripts,{relative:true})).pipe(gulp.dest(paths.root));
 });
 
-gulp.task('watch',function(){
+
+
+gulp.task('watch',['serve'],function(){
 	gulp.watch('app/**/*.js',['scripts']);
 });
 
 
-gulp.task('serve',function(){
-	gulp.src(paths.root).pipe(webserver({
+gulp.task('serve',['scripts'],function(){
+	return gulp.src(paths.root).pipe(webserver({
 		//open:true
 		livereload:true
 	}));
